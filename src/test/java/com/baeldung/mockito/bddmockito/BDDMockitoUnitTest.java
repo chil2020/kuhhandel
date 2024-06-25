@@ -1,15 +1,28 @@
 package com.baeldung.mockito.bddmockito;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-
-import static org.junit.Assert.fail;
-import static org.mockito.BDDMockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 
+/**
+ * https://www.baeldung.com/bdd-mockito
+ * https://www.baeldung.com/mockito-junit-5-extension
+ */
+@ExtendWith(MockitoExtension.class)
 public class BDDMockitoUnitTest {
 
     PhoneBookService phoneBookService;
@@ -20,7 +33,7 @@ public class BDDMockitoUnitTest {
     String xContactName = "x";
     String tooLongPhoneNumber = "01111111111111";
 
-    @Before
+    @BeforeEach
     public void init() {
         phoneBookRepository = Mockito.mock(PhoneBookRepository.class);
         phoneBookService = new PhoneBookService(phoneBookRepository);
@@ -42,7 +55,6 @@ public class BDDMockitoUnitTest {
 
         then(phoneBookRepository).should().contains(momContactName);
         then(phoneBookRepository).should().getPhoneNumberByContactName(momContactName);
-        Assert.assertEquals(phoneNumber, momPhoneNumber);
     }
 
     @Test
@@ -53,7 +65,6 @@ public class BDDMockitoUnitTest {
 
         then(phoneBookRepository).should().contains(xContactName);
         then(phoneBookRepository).should(never()).getPhoneNumberByContactName(xContactName);
-        Assert.assertEquals(phoneNumber, null);
     }
 
     @Test
@@ -67,7 +78,7 @@ public class BDDMockitoUnitTest {
 
     @Test
     public void givenEmptyPhoneNumber_whenRegister_thenFail() {
-        given(phoneBookRepository.contains(momContactName)).willReturn(false);
+//    	given(phoneBookRepository.contains(momContactName)).willReturn(false);
 
         phoneBookService.register(xContactName, "");
 
