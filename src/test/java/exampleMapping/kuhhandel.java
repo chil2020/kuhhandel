@@ -2,18 +2,23 @@ package exampleMapping;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.gaas.kuhhandel.bean.Card;
 import org.gaas.kuhhandel.bean.HandCard;
 import org.gaas.kuhhandel.bean.MoneyCard;
 import org.gaas.kuhhandel.eum.Animal;
 import org.gaas.kuhhandel.repository.InitiateTrader;
 import org.gaas.kuhhandel.repository.Respondent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class kuhhandel {
 
 	InitiateTrader initiateTrader;
@@ -26,7 +31,7 @@ public class kuhhandel {
 	List<Card> respondentCards = new ArrayList<Card>();
 	List<MoneyCard> respondentMoneyCards = new ArrayList<MoneyCard>();
 	
-    @Before
+	@BeforeEach
     public void init() {
         initiateTrader = Mockito.mock(InitiateTrader.class);
         respondent = Mockito.mock(Respondent.class);
@@ -62,8 +67,6 @@ public class kuhhandel {
     // 接受出價
     @Test
     public void givenSelectCardAndBid_whenAcceptBid_thenInitiateTraderGetCardFromRespondent() {
-
-    	
     	Card card = new Card(Animal.DONKEY,1);
     	List<MoneyCard> moneyCards = new ArrayList<MoneyCard>();
     	MoneyCard moneyCard = new MoneyCard(100,1);

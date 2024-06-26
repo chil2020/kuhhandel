@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Game Lobby</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var stompClient = null;
+
+        function connect() {
+            var socket = new SockJS('/game');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                loadRooms();
+            });
+        }
+
+        function loadRooms() {
+            $.get('/rooms', function(response) {
+            	var rooms = response.data;
+                var roomsList = $('#roomsList');
+                roomsList.empty();
+                for (var roomId in rooms) {
+                    var room = rooms[roomId];
+                    var roomElement = $('<div></div>');
+                    roomElement.text(room.name + ' (' + Object.keys(room.players).length + '/5)');
+                    var joinButton = $('<button></button>');
+                    joinButton.text('Join');
+                    joinButton.attr('data-room', roomId);
+                    joinButton.click(function() {
+                        joinRoom($(this).data('room'));
+                    });
+                    roomElement.append(joinButton);
+                    roomsList.append(roomElement);
+                }
+            });
+        }
+
+        function createRoom() {
+            var roomName = $('#roomName').val();
+            $.post('/rooms', 'name=' + roomName)
+            .then(loadRooms);
+        }
+
+        function joinRoom(roomId) {
+            var playerId = prompt('Enter your player ID:');
+            $.post('/rooms/' + roomId + '/join', 'playerId=' + playerId)
+            .then(function(response) {
+            	if (response.code != 200) {
+					alert(response.message);
+					return;
+				}
+            	
+            	const room = response.data;
+            	
+                if (room.players[playerId]) {
+                    window.location.href = '/room.html?roomId=' + roomId + '&playerId=' + playerId;
+                } else {
+                    alert('Failed to join room.');
+                }
+            });
+        }
+
+        connect();
+    </script>
+</head>
+<body>
+    <h1>Lobby</h1>
+    <input type="text" id="roomName" placeholder="Room Name">
+    <button onclick="createRoom()">Create Room</button>
+    <div id="roomsList"></div>
+</body>
+</html>

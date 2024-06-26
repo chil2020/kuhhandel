@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>WebSocket Game Room</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<h1>Room</h1>
+	<div id="playersList"></div>
+	<button id="switchStatusButton">Switch Status</button>
+	<button id="startGameButton" style="display:none;">Start Game</button>
+	<button id="exitRoomButton">Exit Room</button>
+
+	<!-- Add a div to display the messages -->
+	<div id="messages"></div>
+
+	<!-- Add a form for inputting the message -->
+	<form id="talkForm">
+		<input type="text" id="message" placeholder="Type your message here...">
+		<button type="submit">Send</button>
+	</form>
+	<br>
+	<br>
+	<hr>
+	<h1>WebSocket Game</h1>
+    <div id="game-area" style="width:500px;height:500px;position:relative;background-color:lightgrey;">
+        <div id="player" style="width:20px;height:20px;position:absolute;background-color:red; left:0px; top:0px;"></div>
+    </div>
+</body>
+<script>
+	$(function () {
+		$('#game-area').hide();
+		var stompClient = null;
+		var roomId = new URLSearchParams(window.location.search).get('roomId');
+		var playerId = new URLSearchParams(window.location.search).get('playerId');
+
+		function connect() {
+			var socket = new SockJS('/game');
+			stompClient = Stomp.over(socket);
+			// Add a subscription for the talk topic
+			stompClient.connect({}, function (frame) {
+				console.log('Connected: ' + frame);
+				stompClient.subscribe('/topic/rooms/' + roomId, function (message) {
+					var response = JSON.parse(message.body);
+					
+					if(response.code != 200) {
+						alert(response.message);
+						window.location.href = "index.html";
+					}
+					
+					updateRoom(response.data);
+				});
+				stompClient.subscribe('/topic/rooms/' + roomId + '/talk', function (message) {
+					const messageOutput = JSON.parse(message.body).data;
+					$('#messages').append('<p>' + messageOutput + '</p>');
+				});
+				stompClient.subscribe('/topic/rooms/'+ roomId +'/positions', function (message) {
+                    var response = JSON.parse(message.body);
+                    
+                    if(response.code != 200) {
+						alert(response.message);
+						window.location.href = "index.html";
+					}
+                    
+                    updatePlayers(response.data);
+                });
+			});
+
+			// Add an event listener for the form submit event
+			$('#talkForm').submit(function (event) {
+				event.preventDefault();
+				var messageInput = $('#message');
+				stompClient.send("/app/rooms/" + roomId + "/talk", {}, JSON.stringify({'playerId': playerId, 'message': messageInput.val()}));
+				messageInput.val('');
+			});
+
+			$('#switchStatusButton').click(switchStatus);
+			$('#startGameButton').click(startGame);
+			$('#exitRoomButton').click(exitRoom);
+		}
+
+		function switchStatus() {
+			var playerDiv = $('#player' + playerId);
+			var currentStatus = parseInt(playerDiv.attr('data-status'));
+			var newStatus = (currentStatus == 0) ? 1 : 0;
+			stompClient.send('/app/rooms/' + roomId + '/status', {}, JSON.stringify({'id': playerId, 'status': newStatus}));
+		}
+
+		function startGame() {
+			stompClient.send('/app/rooms/' + roomId + '/start', {});
+		}
+
+		function exitRoom() {
+			$.post('/rooms/' + roomId + '/exit', 'playerId=' + playerId)
+				.then(() => {
+					window.location.href = "index.html";
+				});
+		}
+
+		function updateRoom(room) {
+		    var playersList = $('#playersList');
+		    playersList.empty();
+		    var allPlayersReady = true; // Assume all players are ready
+
+		    for (var id in room.players) {
+		        var player = room.players[id];
+		        var playerDiv = $('<div></div>');
+		        playerDiv.attr('id', 'player' + id);
+		        playerDiv.text(id + ' (' + player.status + ')');
+		        playerDiv.attr('data-status', player.status);
+		        playersList.append(playerDiv);
+
+		        // If any player's status is not 2, set allPlayersReady to false
+		        if (player.status != 2) {
+		            allPlayersReady = false;
+		        }
+		    }
+			
+			var readyPlayers = Object.values(room.players).filter(p => p.status == 1).length;
+			if (readyPlayers >= 3 && readyPlayers == Object.keys(room.players).length) {
+				$('#startGameButton').show();
+			} else {
+				$('#startGameButton').hide();
+			}
+
+		    // If all players are ready, show the game area, otherwise hide it
+		    if (allPlayersReady) {
+		        $('#game-area').show();
+		    } else {
+		        $('#game-area').hide();
+		    }
+		}
+		
+		
+		var playerDiv = document.getElementById('player');
+        playerDiv.id = 'player' + playerId;
+
+        function move(x, y) {
+            stompClient.send("/app/rooms/" + roomId + "/move", {}, JSON.stringify({'id': playerId, 'x': x, 'y': y}));
+        }
+
+        function updatePlayers(players) {
+            for (var id in players) {
+                var player = players[id];
+                var playerDiv = $('#game-area #player' + id);
+
+                if (!playerDiv.length) {
+                    playerDiv = $('<div></div>');
+                    playerDiv.attr('id', 'player' + id);
+                    playerDiv.css({
+                        width: '20px',
+                        height: '20px',
+                        position: 'absolute',
+                        backgroundColor: (id === playerId) ? 'red' : 'blue'
+                    });
+                    $('#game-area').append(playerDiv);
+                }
+
+                playerDiv.css({
+                    left: player.x + 'px',
+                    top: player.y + 'px'
+                });
+            }
+        }
+
+        
+		$(document).keydown(function(event) {
+		    var playerDiv = $('#player' + playerId);
+		    if (playerDiv.data('status') != 2) {
+				return;
+			}
+		    
+		    var x = parseInt(playerDiv.css('left')) || 0;
+		    var y = parseInt(playerDiv.css('top')) || 0;
+		
+		    switch(event.key) {
+		        case 'ArrowUp':
+		            y -= 5;
+		            break;
+		        case 'ArrowDown':
+		            y += 5;
+		            break;
+		        case 'ArrowLeft':
+		            x -= 5;
+		            break;
+		        case 'ArrowRight':
+		            x += 5;
+		            break;
+		    }
+		
+		    playerDiv.css('left', x + 'px');
+		    playerDiv.css('top', y + 'px');
+		    move(x, y);
+		});
+
+
+        connect();
+	});
+</script>
+
+</html>
