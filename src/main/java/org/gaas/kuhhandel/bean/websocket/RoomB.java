@@ -3,12 +3,14 @@ package org.gaas.kuhhandel.bean.websocket;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.gaas.kuhhandel.bean.PlayUser;
+
 import lombok.Data;
 
 @Data
-public class Room {
+public class RoomB {
 	private String id;
 	private String name;
-	private ConcurrentHashMap<String, Player> players = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, PlayUser> players = new ConcurrentHashMap<>();
 
 }

@@ -1,6 +1,6 @@
 package org.gaas.kuhhandel.bean;
 
-import org.gaas.kuhhandel.eum.Animal;
+import org.gaas.kuhhandel.eum.AnimalCardEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Card {
-	private Animal animal;
-	private int fraction;
-	
-	
+	private AnimalCardEnum animal;
+	private int quantity;
 }

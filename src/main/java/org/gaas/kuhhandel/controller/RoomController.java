@@ -7,6 +7,7 @@ import org.gaas.kuhhandel.bean.websocket.Player;
 import org.gaas.kuhhandel.bean.websocket.ResponseData;
 import org.gaas.kuhhandel.bean.websocket.Room;
 import org.gaas.kuhhandel.service.RoomService;
+import org.gaas.kuhhandel.utils.RandomIdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -36,7 +37,7 @@ public class RoomController {
     @PostMapping("/rooms")
     @ResponseBody
     public ResponseData createRoom(@RequestParam String name) {
-        String roomId = generateRoomId();
+        String roomId = RandomIdUtils.generateRandomId();
         Room room = new Room();
         room.setId(roomId);
         room.setName(name);
@@ -138,9 +139,5 @@ public class RoomController {
         }
         
         return ResponseData.ok(playerId + ": " + message);
-    }
-    
-    private String generateRoomId() {
-        return Long.toHexString(Double.doubleToLongBits(Math.random()));
     }
 }

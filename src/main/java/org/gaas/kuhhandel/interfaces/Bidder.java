@@ -1,4 +1,4 @@
-package org.gaas.kuhhandel.repository;
+package org.gaas.kuhhandel.interfaces;
 
 import java.util.List;
 
