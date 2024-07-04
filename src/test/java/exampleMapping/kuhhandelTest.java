@@ -2,6 +2,7 @@ package exampleMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.gaas.kuhhandel.bean.Bid;
+import org.gaas.kuhhandel.bean.BidOption;
 import org.gaas.kuhhandel.bean.Game;
 import org.gaas.kuhhandel.bean.HandCard;
 import org.gaas.kuhhandel.bean.MoneyCard;
@@ -51,9 +53,70 @@ public class kuhhandelTest {
 		initiateTraderMoneyCards.add(iTmoneyCard1);
 		initiateTraderMoneyCards.add(iTmoneyCard2);
 		HandCard initiateTraderHandCard = new HandCard(id, animalCardMap, initiateTraderMoneyCards);
-		return new PlayUser(game, id, 2, 60, 0, initiateTraderHandCard);
+		PlayUser playUser = new PlayUser(game, id, 2, 60, 0, initiateTraderHandCard);
+		return Mockito.spy(playUser);
 	}
 
+	/**
+	 * 選擇幕後交易
+	 */
+	@Test
+	public void givenNexRroundStarts_whenTrading_thenUpdateGameData() {
+		RoomB room = new RoomB();
+		room.setId(RandomIdUtils.generateRandomId());
+		room.setName("Room");
+		ConcurrentHashMap<String, PlayUser> players = room.getPlayers();
+		Game game = new Game();
+		game.setGameId(RandomIdUtils.generateRandomId());
+		game.setRoom(room);
+		game.setCurrentRound(7);
+		game.setGameStatus(GameStatusEnum.NEXT_ROUND_STARTS);
+		game.setController(ControllerTypeEnum.PLAYER);
+		
+		// 初始化發起交易者手牌
+		PlayUser playUserA = initTrader(game, "1");
+		players.put(playUserA.getId(), playUserA);
+
+		// 初始化回答者手牌
+		HashMap<AnimalCardEnum, Integer> animalCardMapB = new HashMap<>();
+		animalCardMapB.put(AnimalCardEnum.HORSE, 1);
+		List<MoneyCard> respondentMoneyCardsB = new ArrayList<MoneyCard>();
+		respondentMoneyCardsB.add(new MoneyCard(50, 2));
+		respondentMoneyCardsB.add(new MoneyCard(200, 1));
+		PlayUser playUserB = initRespondent(game, "2", animalCardMapB, respondentMoneyCardsB);
+		players.put(playUserB.getId(), playUserB);
+		
+		HashMap<AnimalCardEnum, Integer> animalCardMapC = new HashMap<>();
+		animalCardMapC.put(AnimalCardEnum.DOG, 1);
+		List<MoneyCard> respondentMoneyCardsC = new ArrayList<MoneyCard>();
+		respondentMoneyCardsC.add(new MoneyCard(50, 2));
+		respondentMoneyCardsC.add(new MoneyCard(200, 1));
+		PlayUser playUserC = initRespondent(game, "3", animalCardMapC, respondentMoneyCardsC);
+		players.put(playUserC.getId(), playUserC);
+		
+		game.setCurrentPlayerId(playUserA.getId());
+		
+		//given
+//		given(playUserA.isCurrentPlayer()).willReturn(true);
+		
+		//when
+		List<BidOption> BidOptions = playUserA.selectBid();
+		
+		//then
+		then(playUserA).should().isCurrentPlayer();
+		
+		assertEquals(BidOptions.size(), 2);
+		List<BidOption> validBidOptions = List.of(new BidOption("2",List.of(AnimalCardEnum.HORSE)), new BidOption("3",List.of(AnimalCardEnum.DOG)));
+		
+		//遊戲狀態變更為"交易"
+		assertEquals(GameStatusEnum.TRADING, game.getGameStatus());
+		// 驗證選擇幕後交易的回傳值
+		assertEquals(validBidOptions, BidOptions);
+		//回合控制權玩家A交易者
+		assertEquals(ControllerTypeEnum.PLAYER, game.getController());
+		assertEquals(playUserA.getId(), game.getCurrentPlayerId());
+	}
+	
 	/**
 	 * 接受出價
 	 */

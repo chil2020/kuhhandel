@@ -1,6 +1,9 @@
 package org.gaas.kuhhandel.bean;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.gaas.kuhhandel.eum.AnimalCardEnum;
 import org.gaas.kuhhandel.eum.ControllerTypeEnum;
@@ -70,6 +73,44 @@ public class PlayUser implements Auctioneer, Bidder, InitiateTrader, Respondent 
 		}
 		
 		return null;
+	}
+	public Boolean isCurrentPlayer() {
+		if (!id.equals(game.getCurrentPlayerId())) {
+			System.out.println("Not current player: " + id + " != " + game.getCurrentPlayerId());
+			return false;
+		}
+		
+		if (!(GameStatusEnum.ROUND_STARTS.equals(game.getGameStatus()) || GameStatusEnum.NEXT_ROUND_STARTS.equals(game.getGameStatus()))) {
+			System.out.println("Not in the right game status: " + game.getGameStatus());
+			return false;
+		}
+		
+		return true;
+	}
+	public List<BidOption> selectBid() {
+		if (!isCurrentPlayer()) {
+			return null;
+		}
+		List<BidOption> result = new ArrayList<>();
+		HashMap<AnimalCardEnum, Integer> currentPlayerAnimalCardMap = handCard.getAnimalCardMap();
+		
+		ConcurrentHashMap<String, PlayUser> players = game.getRoom().getPlayers();
+		for(PlayUser player : players.values()) {
+			if (id.equals(player.getId())) continue;
+			
+			List<AnimalCardEnum> playerAnimalCardMap = new ArrayList<>();
+			player.getHandCard().getAnimalCardMap().forEach((animalCard, quantity) -> {
+				if (currentPlayerAnimalCardMap.containsKey(animalCard)) {
+					playerAnimalCardMap.add(animalCard);
+				}
+				
+				result.add(new BidOption(player.getId(), playerAnimalCardMap));
+			});
+		}
+		
+		game.setGameStatus(GameStatusEnum.TRADING);
+		
+		return result;
 	}
 
 }
