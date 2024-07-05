@@ -1,4 +1,4 @@
-package exampleMapping;
+package org.gaas.kuhhandel.exampleMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;

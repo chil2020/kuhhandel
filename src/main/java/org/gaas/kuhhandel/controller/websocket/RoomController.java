@@ -1,4 +1,4 @@
-package org.gaas.kuhhandel.controller;
+package org.gaas.kuhhandel.controller.websocket;
 
 import java.io.IOException;
 import java.util.Map;
