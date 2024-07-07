@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MoneyCard {
 	private Integer money;
-	private int number;
+	private int quantity;
 }
