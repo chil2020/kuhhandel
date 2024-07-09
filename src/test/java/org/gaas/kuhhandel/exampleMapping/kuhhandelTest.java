@@ -15,7 +15,7 @@ import org.gaas.kuhhandel.bean.Game;
 import org.gaas.kuhhandel.bean.HandCard;
 import org.gaas.kuhhandel.bean.MoneyCard;
 import org.gaas.kuhhandel.bean.PlayUser;
-import org.gaas.kuhhandel.bean.websocket.RoomB;
+import org.gaas.kuhhandel.bean.demo.websocket.RoomB;
 import org.gaas.kuhhandel.eum.AnimalCardEnum;
 import org.gaas.kuhhandel.eum.ControllerTypeEnum;
 import org.gaas.kuhhandel.eum.GameStatusEnum;

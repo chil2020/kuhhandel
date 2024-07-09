@@ -1,5 +1,5 @@
 
-package org.gaas.kuhhandel.bean.websocket;
+package org.gaas.kuhhandel.bean.demo.websocket;
 
 public class ResponseData {
 	private String code;

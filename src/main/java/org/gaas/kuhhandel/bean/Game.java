@@ -1,6 +1,6 @@
 package org.gaas.kuhhandel.bean;
 
-import org.gaas.kuhhandel.bean.websocket.RoomB;
+import org.gaas.kuhhandel.bean.demo.websocket.RoomB;
 import org.gaas.kuhhandel.eum.ControllerTypeEnum;
 import org.gaas.kuhhandel.eum.GameStatusEnum;
 

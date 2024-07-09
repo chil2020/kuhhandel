@@ -1,11 +1,11 @@
-package org.gaas.kuhhandel.controller.websocket;
+package org.gaas.kuhhandel.controller.demo.websocket;
 
 import java.io.IOException;
 import java.util.Map;
 
-import org.gaas.kuhhandel.bean.websocket.Player;
-import org.gaas.kuhhandel.bean.websocket.ResponseData;
-import org.gaas.kuhhandel.bean.websocket.Room;
+import org.gaas.kuhhandel.bean.demo.websocket.Player;
+import org.gaas.kuhhandel.bean.demo.websocket.ResponseData;
+import org.gaas.kuhhandel.bean.demo.websocket.Room;
 import org.gaas.kuhhandel.service.RoomService;
 import org.gaas.kuhhandel.utils.RandomIdUtils;
 import org.springframework.beans.factory.annotation.Autowired;

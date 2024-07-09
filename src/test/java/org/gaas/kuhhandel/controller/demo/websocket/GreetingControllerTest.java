@@ -1,4 +1,4 @@
-package org.gaas.kuhhandel.websocket;
+package org.gaas.kuhhandel.controller.demo.websocket;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 
-import org.gaas.kuhhandel.bean.websocket.Message;
+import org.gaas.kuhhandel.bean.demo.websocket.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

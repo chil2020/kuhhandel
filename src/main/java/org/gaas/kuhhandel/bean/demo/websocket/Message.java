@@ -1,4 +1,4 @@
-package org.gaas.kuhhandel.bean.websocket;
+package org.gaas.kuhhandel.bean.demo.websocket;
 
 import lombok.Data;
 

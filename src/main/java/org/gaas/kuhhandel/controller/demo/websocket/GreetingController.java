@@ -1,6 +1,6 @@
-package org.gaas.kuhhandel.controller.websocket;
+package org.gaas.kuhhandel.controller.demo.websocket;
 
-import org.gaas.kuhhandel.bean.websocket.Message;
+import org.gaas.kuhhandel.bean.demo.websocket.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
