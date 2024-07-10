@@ -17,11 +17,12 @@ public enum GameStatusEnum {
 	AUCTION_AND_CHOOSE_BUY(240, "玩家 拍賣者選擇買下"),
 	AUCTION_AND_CHOOSE_SELL(250, "玩家 拍賣者選擇賣出"),
 	TRADING(300, "玩家 選擇幕後交易"),
-	TRADING_PLAYER_ACCEPT_BID(310, "玩家 被指定玩家選擇接受出價"),
-	TRADING_PLAYER_DICKER(320, "玩家 被指定玩家選擇還價"),
-	TRADING_FINAL_HOST_SPECIFY_MONEY_CARDS(321, "玩家 第一次議價平手 發起玩家選擇金錢卡"),
-	TRADING_FINAL_PLAYER_SPECIFY_MONEY_CARDS(322, "玩家 第一次議價平手 被指定玩家選擇金錢卡"),
-	TRADING_JUDGMENT(330, "系統 判斷議價價高者或平手，與分配金錢卡與動物卡"),
+	TRADING_PLAYER(301, "幕後交易 被指定玩家 選擇回合權"),
+	TRADING_PLAYER_ACCEPT_BID(310, "幕後交易 被指定玩家 選擇接受出價"),
+	TRADING_PLAYER_DICKER(320, "幕後交易 被指定玩家 選擇還價"),
+	TRADING_FINAL_HOST_SPECIFY_MONEY_CARDS(321, "幕後交易 玩家 第一次議價平手 發起玩家選擇金錢卡"),
+	TRADING_FINAL_PLAYER_SPECIFY_MONEY_CARDS(322, "幕後交易 玩家 第一次議價平手 被指定玩家選擇金錢卡"),
+	TRADING_JUDGMENT(330, "幕後交易 系統 判斷議價價高者或平手，與分配金錢卡與動物卡"),
 	GAMES_END(500, "系統 遊戲結束");
 
 	private int code;

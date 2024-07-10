@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.gaas.kuhhandel.eum.AnimalCardEnum;
+import org.gaas.kuhhandel.eum.GameStatusEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class Bid implements Serializable{
 	 */
 	private static final Integer MAX_TRADING_COUNT = 2;
 	
+	private GameStatusEnum resultStatus;
 	private String initiateTraderId;
 	private String respondentId;
 	private HashMap<AnimalCardEnum, Integer> animalCardMap;

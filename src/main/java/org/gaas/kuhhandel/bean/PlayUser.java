@@ -34,8 +34,9 @@ public class PlayUser implements Auctioneer, Bidder, InitiateTrader, Respondent 
 	public void acceptBid(Bid bid) {
 		if(!validBid(bid))	return;
 		
+		bid.setResultStatus(GameStatusEnum.TRADING_PLAYER_ACCEPT_BID);
 		game.setBid(bid);
-		game.setGameStatus(GameStatusEnum.TRADING_PLAYER_ACCEPT_BID);
+		game.setGameStatus(GameStatusEnum.TRADING_JUDGMENT);
 		game.setController(ControllerTypeEnum.SYSTEM);
 	}
 	@Override
@@ -103,7 +104,7 @@ public class PlayUser implements Auctioneer, Bidder, InitiateTrader, Respondent 
 			});
 		}
 		
-		game.setGameStatus(GameStatusEnum.TRADING);
+		game.setGameStatus(GameStatusEnum.TRADING_PLAYER);
 		
 		return result;
 	}

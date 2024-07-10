@@ -108,8 +108,8 @@ public class kuhhandelTest {
 		assertEquals(BidOptions.size(), 2);
 		List<BidOption> validBidOptions = List.of(new BidOption("2",List.of(AnimalCardEnum.HORSE)), new BidOption("3",List.of(AnimalCardEnum.DOG)));
 		
-		//遊戲狀態變更為"交易"
-		assertEquals(GameStatusEnum.TRADING, game.getGameStatus());
+		//遊戲狀態變更為"幕後交易 被指定玩家 選擇回合權"
+		assertEquals(GameStatusEnum.TRADING_PLAYER, game.getGameStatus());
 		// 驗證選擇幕後交易的回傳值
 		assertEquals(validBidOptions, BidOptions);
 		//回合控制權玩家A交易者
@@ -130,7 +130,7 @@ public class kuhhandelTest {
 		game.setGameId(RandomIdUtils.generateRandomId());
 		game.setRoom(room);
 		game.setCurrentRound(9);
-		game.setGameStatus(GameStatusEnum.TRADING);
+		game.setGameStatus(GameStatusEnum.TRADING_PLAYER);
 		game.setController(ControllerTypeEnum.PLAYER);
 		
 		// 初始化發起交易者手牌
@@ -166,7 +166,7 @@ public class kuhhandelTest {
 		moneyCards.add(moneyCard);
 		
 		//發起幕後交易的資料
-		Bid bid = new Bid(playUserA.getId(), playUserB.getId(), animalCardMap, moneyCards, 0);
+		Bid bid = new Bid(null, playUserA.getId(), playUserB.getId(), animalCardMap, moneyCards, 0);
 		given(playUserB.validBid(bid)).willReturn(true);
 
 		//when
@@ -175,12 +175,13 @@ public class kuhhandelTest {
 		//then
 		//後端保留幕後交易資料
 		assertEquals(game.getBid(), bid);
+		assertEquals(game.getBid().getResultStatus(), GameStatusEnum.TRADING_PLAYER_ACCEPT_BID);
 		assertEquals(game.getBid().getInitiateTraderId(), bid.getInitiateTraderId());
 		assertEquals(game.getBid().getRespondentId(), bid.getRespondentId());
 		assertEquals(game.getBid().getAnimalCardMap(), bid.getAnimalCardMap());
 		assertEquals(game.getBid().getMoneyCards(), bid.getMoneyCards());
-		//遊戲狀態變更為"交易玩家接受出價"
-		assertEquals(game.getGameStatus(), GameStatusEnum.TRADING_PLAYER_ACCEPT_BID);
+		//遊戲狀態變更為"幕後交易 系統 判斷議價價高者或平手，與分配金錢卡與動物卡"
+		assertEquals(game.getGameStatus(), GameStatusEnum.TRADING_JUDGMENT);
         //回合控制權移交給系統
 		assertEquals(game.getController(), ControllerTypeEnum.SYSTEM);
 	}
