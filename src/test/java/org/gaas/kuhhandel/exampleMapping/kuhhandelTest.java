@@ -70,7 +70,7 @@ public class kuhhandelTest {
 		game.setGameId(RandomIdUtils.generateRandomId());
 		game.setRoom(room);
 		game.setCurrentRound(7);
-		game.setGameStatus(GameStatusEnum.NEXT_ROUND_STARTS);
+		game.setGameStatus(GameStatusEnum.ROUND_STARTS);
 		game.setController(ControllerTypeEnum.PLAYER);
 		
 		// 初始化發起交易者手牌
@@ -130,7 +130,7 @@ public class kuhhandelTest {
 		game.setGameId(RandomIdUtils.generateRandomId());
 		game.setRoom(room);
 		game.setCurrentRound(9);
-		game.setGameStatus(GameStatusEnum.TRADING_HOST_SPECIFY_PLAYER_AND_CARDS);
+		game.setGameStatus(GameStatusEnum.TRADING);
 		game.setController(ControllerTypeEnum.PLAYER);
 		
 		// 初始化發起交易者手牌
@@ -166,7 +166,7 @@ public class kuhhandelTest {
 		moneyCards.add(moneyCard);
 		
 		//發起幕後交易的資料
-		Bid bid = new Bid(playUserA.getId(), playUserB.getId(), animalCardMap, moneyCards);
+		Bid bid = new Bid(playUserA.getId(), playUserB.getId(), animalCardMap, moneyCards, 0);
 		given(playUserB.validBid(bid)).willReturn(true);
 
 		//when

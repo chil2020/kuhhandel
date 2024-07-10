@@ -64,7 +64,7 @@ public class PlayUser implements Auctioneer, Bidder, InitiateTrader, Respondent 
 		return null;
 	}
 	public Boolean validBid(Bid bid) {
-		if(!GameStatusEnum.TRADING_HOST_SPECIFY_PLAYER_AND_CARDS.equals(game.getGameStatus())) {
+		if(!GameStatusEnum.TRADING.equals(game.getGameStatus())) {
             return false;
         }
 		
@@ -77,11 +77,6 @@ public class PlayUser implements Auctioneer, Bidder, InitiateTrader, Respondent 
 	public Boolean isCurrentPlayer() {
 		if (!id.equals(game.getCurrentPlayerId())) {
 			System.out.println("Not current player: " + id + " != " + game.getCurrentPlayerId());
-			return false;
-		}
-		
-		if (!(GameStatusEnum.ROUND_STARTS.equals(game.getGameStatus()) || GameStatusEnum.NEXT_ROUND_STARTS.equals(game.getGameStatus()))) {
-			System.out.println("Not in the right game status: " + game.getGameStatus());
 			return false;
 		}
 		
